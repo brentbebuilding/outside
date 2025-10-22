@@ -602,7 +602,7 @@ canvas {
 
 .cds-chart-container {
     background: var(--card-bg);
-    padding: 20px;
+    padding: 20px 12px;
     border-radius: 16px;
     border: 1px solid var(--card-border);
     box-shadow: var(--shadow-sm);
@@ -640,17 +640,21 @@ body.dark-mode .cds-chart-container {
 
 .cds-chart-wrapper {
     background: var(--bg-alt);
-    padding: 12px;
+    padding: 16px 8px;
     border-radius: 12px;
     text-align: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .cds-chart {
     width: 100%;
-    max-width: 600px;
+    min-width: 100%;
+    max-width: none;
     height: auto;
     border-radius: 8px;
     box-shadow: var(--shadow-sm);
+    display: block;
 }
 
 body.dark-mode .cds-chart {
@@ -849,6 +853,14 @@ footer p {
 
     canvas {
         max-height: 300px !important;
+    }
+
+    .cds-chart-container {
+        padding: 24px 16px;
+    }
+
+    .cds-chart-wrapper {
+        padding: 20px 12px;
     }
 }
 
