@@ -1,0 +1,20 @@
+{
+  "name": "whistler-winter-weather",
+  "version": "1.0.0",
+  "description": "Comprehensive winter weather app for Whistler, BC using open source weather models and visualization tools",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "whistler",
+    "weather",
+    "winter",
+    "skiing",
+    "snowboarding",
+    "open-meteo"
+  ],
+  "author": "",
+  "license": "MIT"
+}

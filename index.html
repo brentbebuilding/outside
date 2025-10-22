@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whistler Winter Weather</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Whistler Winter Weather</h1>
+            <p class="subtitle">Real-time conditions and forecasts for Whistler, BC</p>
+            <div id="last-updated"></div>
+        </header>
+
+        <!-- Current Conditions -->
+        <section class="current-weather">
+            <h2>Current Conditions</h2>
+            <div class="current-grid">
+                <div class="weather-card">
+                    <h3>Temperature</h3>
+                    <div class="value" id="current-temp">--</div>
+                    <div class="unit">°C</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Feels Like</h3>
+                    <div class="value" id="feels-like">--</div>
+                    <div class="unit">°C</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Snow Depth</h3>
+                    <div class="value" id="snow-depth">--</div>
+                    <div class="unit">cm</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Cloud Cover</h3>
+                    <div class="value" id="cloud-cover">--</div>
+                    <div class="unit">%</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Precipitation</h3>
+                    <div class="value" id="precipitation">--</div>
+                    <div class="unit">mm/h</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Wind Speed</h3>
+                    <div class="value" id="wind-speed">--</div>
+                    <div class="unit">km/h</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Wind Direction</h3>
+                    <div class="value" id="wind-direction">--</div>
+                    <div class="unit">°</div>
+                </div>
+                <div class="weather-card">
+                    <h3>Visibility</h3>
+                    <div class="value" id="visibility">--</div>
+                    <div class="unit">km</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ski Conditions Alert -->
+        <section class="ski-conditions">
+            <h2>Ski Conditions</h2>
+            <div id="ski-alert" class="alert-box"></div>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h2>Temperature Forecast (48 Hours)</h2>
+                <canvas id="tempChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Snowfall & Precipitation (48 Hours)</h2>
+                <canvas id="snowChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Cloud Cover Prediction (48 Hours)</h2>
+                <canvas id="cloudChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Wind Speed (48 Hours)</h2>
+                <canvas id="windChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 7-Day Forecast -->
+        <section class="forecast-section">
+            <h2>7-Day Forecast</h2>
+            <div id="daily-forecast" class="forecast-grid"></div>
+        </section>
+
+        <!-- Hourly Breakdown -->
+        <section class="hourly-section">
+            <h2>24-Hour Detailed Forecast</h2>
+            <div id="hourly-forecast" class="hourly-scroll"></div>
+        </section>
+
+        <footer>
+            <p>Data provided by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> - Open Source Weather API</p>
+            <p>Location: Whistler, BC (50.12°N, 122.95°W)</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
