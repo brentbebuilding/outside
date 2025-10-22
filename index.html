@@ -10,6 +10,12 @@
 <body>
     <div class="container">
         <header>
+            <div class="header-top">
+                <button id="dark-mode-toggle" class="dark-mode-btn" aria-label="Toggle dark mode">
+                    <span class="icon-light">☀️</span>
+                    <span class="icon-dark">🌙</span>
+                </button>
+            </div>
             <h1>Whistler Winter Weather</h1>
             <p class="subtitle">Real-time conditions and forecasts for Whistler, BC</p>
             <div id="last-updated"></div>
@@ -66,6 +72,56 @@
         <section class="ski-conditions">
             <h2>Ski Conditions</h2>
             <div id="ski-alert" class="alert-box"></div>
+        </section>
+
+        <!-- Live Mountain Webcams -->
+        <section class="webcams-section">
+            <h2>Live Mountain Webcams</h2>
+            <p class="webcam-intro">View real-time conditions across Whistler Blackcomb. Cameras update every 10 minutes.</p>
+            <div class="webcam-grid">
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>Whistler Peak</h3>
+                    <div class="webcam-elevation">2,182m (7,160ft)</div>
+                    <p>Summit views and weather conditions at the highest accessible point</p>
+                    <a href="https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx" target="_blank" rel="noopener noreferrer" class="webcam-btn">View Live Cam</a>
+                </div>
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>Roundhouse Lodge</h3>
+                    <div class="webcam-elevation">1,850m (6,070ft)</div>
+                    <p>Top of Whistler Village Gondola, mid-mountain conditions</p>
+                    <a href="https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx" target="_blank" rel="noopener noreferrer" class="webcam-btn">View Live Cam</a>
+                </div>
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>7th Heaven - Blackcomb</h3>
+                    <div class="webcam-elevation">2,240m (7,350ft)</div>
+                    <p>High alpine terrain on Blackcomb Mountain</p>
+                    <a href="https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx" target="_blank" rel="noopener noreferrer" class="webcam-btn">View Live Cam</a>
+                </div>
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>Rendezvous Lodge</h3>
+                    <div class="webcam-elevation">1,860m (6,100ft)</div>
+                    <p>Blackcomb mid-mountain with Peak 2 Peak Gondola views</p>
+                    <a href="https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx" target="_blank" rel="noopener noreferrer" class="webcam-btn">View Live Cam</a>
+                </div>
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>Village Base</h3>
+                    <div class="webcam-elevation">675m (2,215ft)</div>
+                    <p>Base area conditions and village atmosphere</p>
+                    <a href="https://www.whistler.com/webcams/" target="_blank" rel="noopener noreferrer" class="webcam-btn">View Live Cam</a>
+                </div>
+                <div class="webcam-card">
+                    <div class="webcam-icon">📹</div>
+                    <h3>All Mountain Cams</h3>
+                    <div class="webcam-elevation">Multiple Locations</div>
+                    <p>View all 7+ official Whistler Blackcomb webcams</p>
+                    <a href="https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx" target="_blank" rel="noopener noreferrer" class="webcam-btn">View All Cams</a>
+                </div>
+            </div>
         </section>
 
         <!-- Charts -->

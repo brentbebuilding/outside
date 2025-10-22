@@ -7,6 +7,40 @@
     --danger-red: #dc3545;
     --success-green: #28a745;
     --powder-blue: #a8dadc;
+
+    /* Light mode colors (default) */
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #764ba2;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --card-gradient-start: #d4e9f7;
+    --card-gradient-end: #a8dadc;
+    --forecast-gradient-start: #e0f2fe;
+    --forecast-gradient-end: #bae6fd;
+    --hourly-gradient-start: #f0f9ff;
+    --hourly-gradient-end: #e0f2fe;
+    --webcam-gradient-start: #fef3c7;
+    --webcam-gradient-end: #fde68a;
+}
+
+/* Dark mode colors */
+body.dark-mode {
+    --bg-gradient-start: #1a202c;
+    --bg-gradient-end: #2d3748;
+    --card-bg: rgba(45, 55, 72, 0.95);
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --header-bg: rgba(45, 55, 72, 0.95);
+    --card-gradient-start: #2d3748;
+    --card-gradient-end: #4a5568;
+    --forecast-gradient-start: #374151;
+    --forecast-gradient-end: #4b5563;
+    --hourly-gradient-start: #374151;
+    --hourly-gradient-end: #4b5563;
+    --webcam-gradient-start: #78350f;
+    --webcam-gradient-end: #92400e;
 }
 
 * {
@@ -17,10 +51,11 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #2d3748;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -31,11 +66,13 @@ body {
 
 header {
     text-align: center;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--header-bg);
     padding: 30px;
     border-radius: 15px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transition: background 0.3s ease;
 }
 
 header h1 {
@@ -53,15 +90,55 @@ header h1 {
 #last-updated {
     margin-top: 10px;
     font-size: 0.9em;
-    color: #718096;
+    color: var(--text-secondary);
+}
+
+/* Dark Mode Toggle */
+.header-top {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.dark-mode-btn {
+    background: var(--deep-blue);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode-btn:hover {
+    transform: scale(1.1);
+    background: #1e4a5f;
+}
+
+.dark-mode-btn .icon-dark {
+    display: none;
+}
+
+body.dark-mode .dark-mode-btn .icon-light {
+    display: none;
+}
+
+body.dark-mode .dark-mode-btn .icon-dark {
+    display: block;
 }
 
 section {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--card-bg);
     padding: 25px;
     margin-bottom: 25px;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: background 0.3s ease;
 }
 
 h2 {
@@ -79,12 +156,12 @@ h2 {
 }
 
 .weather-card {
-    background: linear-gradient(135deg, var(--ice-blue) 0%, var(--powder-blue) 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     padding: 20px;
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .weather-card:hover {
@@ -153,10 +230,11 @@ h2 {
 }
 
 .chart-container {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: background 0.3s ease;
 }
 
 .chart-container h2 {
@@ -175,12 +253,12 @@ canvas {
 }
 
 .forecast-card {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    background: linear-gradient(135deg, var(--forecast-gradient-start) 0%, var(--forecast-gradient-end) 100%);
     padding: 20px;
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .forecast-card:hover {
@@ -222,11 +300,12 @@ canvas {
 
 .hourly-card {
     min-width: 120px;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    background: linear-gradient(135deg, var(--hourly-gradient-start) 0%, var(--hourly-gradient-end) 100%);
     padding: 15px;
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
 }
 
 .hourly-card .time {
@@ -250,9 +329,10 @@ canvas {
 footer {
     text-align: center;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-bg);
     border-radius: 10px;
     margin-top: 30px;
+    transition: background 0.3s ease;
 }
 
 footer a {
@@ -263,6 +343,77 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
+}
+
+/* Webcam Section */
+.webcam-intro {
+    color: var(--mountain-grey);
+    margin-bottom: 20px;
+    font-size: 1.05em;
+}
+
+.webcam-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.webcam-card {
+    background: linear-gradient(135deg, var(--webcam-gradient-start) 0%, var(--webcam-gradient-end) 100%);
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.webcam-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.webcam-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.webcam-card h3 {
+    color: var(--deep-blue);
+    margin-bottom: 8px;
+    font-size: 1.3em;
+}
+
+.webcam-elevation {
+    color: var(--mountain-grey);
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+}
+
+.webcam-card p {
+    color: #4a5568;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.webcam-btn {
+    display: inline-block;
+    background: var(--deep-blue);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.webcam-btn:hover {
+    background: #1e4a5f;
+    transform: scale(1.05);
 }
 
 /* Responsive Design */
@@ -281,6 +432,10 @@ footer a:hover {
 
     .forecast-grid {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .webcam-grid {
+        grid-template-columns: 1fr;
     }
 }
 

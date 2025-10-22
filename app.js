@@ -7,10 +7,37 @@ let tempChart, snowChart, cloudChart, windChart;
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    initializeDarkMode();
     fetchWeatherData();
     // Refresh data every 10 minutes
     setInterval(fetchWeatherData, 600000);
 });
+
+// Dark Mode functionality
+function initializeDarkMode() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+
+    // Apply saved preference or default to light mode
+    if (savedDarkMode === 'enabled') {
+        body.classList.add('dark-mode');
+    }
+
+    // Toggle dark mode on button click
+    darkModeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+
+        // Save preference to localStorage
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    });
+}
 
 async function fetchWeatherData() {
     try {
