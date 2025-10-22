@@ -46,7 +46,7 @@ async function fetchWeatherData() {
 
         const hourlyWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&hourly=temperature_2m,precipitation,snowfall,cloud_cover,visibility,wind_speed_10m,wind_direction_10m,weather_code,snow_depth&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&forecast_days=7`;
 
-        const dailyWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,precipitation_probability_max,wind_speed_10m_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm`;
+        const dailyWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,precipitation_probability_max,wind_speed_10m_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&forecast_days=7`;
 
         // Fetch data for different elevations (for freeze level calculation)
         const peakUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=2182&temperature_unit=celsius&forecast_days=3`;
@@ -62,6 +62,14 @@ async function fetchWeatherData() {
             fetch(midUrl),
             fetch(baseUrl)
         ]);
+
+        // Check if all responses are ok
+        if (!currentResponse.ok) throw new Error(`Current weather API failed: ${currentResponse.status}`);
+        if (!hourlyResponse.ok) throw new Error(`Hourly weather API failed: ${hourlyResponse.status}`);
+        if (!dailyResponse.ok) throw new Error(`Daily weather API failed: ${dailyResponse.status}`);
+        if (!peakResponse.ok) throw new Error(`Peak elevation API failed: ${peakResponse.status}`);
+        if (!midResponse.ok) throw new Error(`Mid elevation API failed: ${midResponse.status}`);
+        if (!baseResponse.ok) throw new Error(`Base elevation API failed: ${baseResponse.status}`);
 
         const currentData = await currentResponse.json();
         const hourlyData = await hourlyResponse.json();
@@ -82,7 +90,9 @@ async function fetchWeatherData() {
         document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     } catch (error) {
         console.error('Error fetching weather data:', error);
-        document.getElementById('last-updated').textContent = `Error loading data. Retrying...`;
+        document.getElementById('last-updated').textContent = `Error: ${error.message}`;
+        // Retry after 10 seconds
+        setTimeout(fetchWeatherData, 10000);
     }
 }
 
