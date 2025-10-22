@@ -642,14 +642,56 @@ body.dark-mode .cds-chart-container {
     background: var(--bg-alt);
     padding: 16px 8px;
     border-radius: 12px;
-    text-align: center;
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+    cursor: grab;
+}
+
+.cds-chart-wrapper:active {
+    cursor: grabbing;
+}
+
+.cds-chart-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.cds-chart-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cds-chart-wrapper::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 4px;
+}
+
+body.dark-mode .cds-chart-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.scroll-hint {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+body.dark-mode .scroll-hint {
+    color: var(--accent-green);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
 }
 
 .cds-chart {
-    width: 100%;
-    min-width: 100%;
+    width: auto;
+    min-width: 800px;
     max-width: none;
     height: auto;
     border-radius: 8px;
@@ -861,6 +903,10 @@ footer p {
 
     .cds-chart-wrapper {
         padding: 20px 12px;
+    }
+
+    .cds-chart {
+        min-width: 1200px;
     }
 }
 
