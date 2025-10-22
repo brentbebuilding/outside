@@ -48,35 +48,21 @@ async function fetchWeatherData() {
 
         const dailyWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,precipitation_probability_max,wind_speed_10m_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&forecast_days=7`;
 
-        // Fetch data for different elevations (for freeze level calculation)
-        const peakUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=2182&temperature_unit=celsius&forecast_days=3`;
-        const midUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=1850&temperature_unit=celsius&forecast_days=3`;
-        const baseUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=675&temperature_unit=celsius&forecast_days=3`;
-
-        // Fetch all data in parallel
-        const [currentResponse, hourlyResponse, dailyResponse, peakResponse, midResponse, baseResponse] = await Promise.all([
+        // Fetch only 3 API calls instead of 6 (avoids rate limiting)
+        const [currentResponse, hourlyResponse, dailyResponse] = await Promise.all([
             fetch(currentWeatherUrl),
             fetch(hourlyWeatherUrl),
-            fetch(dailyWeatherUrl),
-            fetch(peakUrl),
-            fetch(midUrl),
-            fetch(baseUrl)
+            fetch(dailyWeatherUrl)
         ]);
 
         // Check if all responses are ok
         if (!currentResponse.ok) throw new Error(`Current weather API failed: ${currentResponse.status}`);
         if (!hourlyResponse.ok) throw new Error(`Hourly weather API failed: ${hourlyResponse.status}`);
         if (!dailyResponse.ok) throw new Error(`Daily weather API failed: ${dailyResponse.status}`);
-        if (!peakResponse.ok) throw new Error(`Peak elevation API failed: ${peakResponse.status}`);
-        if (!midResponse.ok) throw new Error(`Mid elevation API failed: ${midResponse.status}`);
-        if (!baseResponse.ok) throw new Error(`Base elevation API failed: ${baseResponse.status}`);
 
         const currentData = await currentResponse.json();
         const hourlyData = await hourlyResponse.json();
         const dailyData = await dailyResponse.json();
-        const peakData = await peakResponse.json();
-        const midData = await midResponse.json();
-        const baseData = await baseResponse.json();
 
         // Update UI
         updateCurrentWeather(currentData, hourlyData);
@@ -84,7 +70,7 @@ async function fetchWeatherData() {
         updateDailyForecast(dailyData);
         updateHourlyForecast(hourlyData);
         updateSkiConditions(currentData, hourlyData);
-        updateFreezeLevel(peakData, midData, baseData);
+        updateFreezeLevelCalculated(currentData, hourlyData);
 
         // Update last updated time
         document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
@@ -468,6 +454,145 @@ function updateZoneCard(zone, temp, freezeLevel, elevation) {
 
     // Update card class
     card.className = `zone-card ${cardClass}`;
+}
+
+// ========== CALCULATED FREEZE LEVEL (No extra API calls) ==========
+function updateFreezeLevelCalculated(currentData, hourlyData) {
+    // Use atmospheric lapse rate to calculate temps at different elevations
+    // Standard lapse rate: ~6.5°C per 1000m (we'll use 6.5)
+    const LAPSE_RATE = 0.0065; // degrees per meter
+    const BASE_ELEVATION = 675; // Whistler village elevation
+
+    // Current temperature is at base elevation
+    const baseTemp = currentData.current.temperature_2m;
+
+    // Calculate temperatures at different elevations
+    const midElevation = 1850;
+    const peakElevation = 2182;
+
+    const midTemp = baseTemp - (LAPSE_RATE * (midElevation - BASE_ELEVATION));
+    const peakTemp = baseTemp - (LAPSE_RATE * (peakElevation - BASE_ELEVATION));
+
+    // Calculate freeze level using linear interpolation
+    let freezeLevel = 0;
+
+    if (baseTemp <= 0) {
+        freezeLevel = 0; // Below base elevation
+    } else if (peakTemp >= 0) {
+        freezeLevel = 2500; // Above peak elevation
+    } else {
+        // Interpolate to find where temp = 0°C
+        if (midTemp >= 0) {
+            // Freeze level is between mid and peak
+            const tempDiff = midTemp - peakTemp;
+            const elevDiff = peakElevation - midElevation;
+            const tempToZero = midTemp;
+            freezeLevel = midElevation + (tempToZero / tempDiff) * elevDiff;
+        } else {
+            // Freeze level is between base and mid
+            const tempDiff = baseTemp - midTemp;
+            const elevDiff = midElevation - BASE_ELEVATION;
+            const tempToZero = baseTemp;
+            freezeLevel = BASE_ELEVATION + (tempToZero / tempDiff) * elevDiff;
+        }
+    }
+
+    // Update freeze level display
+    document.getElementById('freeze-level').textContent = Math.round(freezeLevel);
+
+    // Update zone cards with temperatures and snow/rain status
+    updateZoneCard('peak', peakTemp, freezeLevel, peakElevation);
+    updateZoneCard('mid', midTemp, freezeLevel, midElevation);
+    updateZoneCard('base', baseTemp, freezeLevel, BASE_ELEVATION);
+
+    // Create freeze level chart with calculated temps
+    createFreezeLevelChartCalculated(currentData, hourlyData, freezeLevel);
+}
+
+function createFreezeLevelChartCalculated(currentData, hourlyData, freezeLevel) {
+    const ctx = document.getElementById('freezeLevelChart');
+    if (!ctx) return;
+
+    // Use hourly temperature data at base elevation
+    const hours = 24;
+    const times = hourlyData.hourly.time.slice(0, hours).map(time => {
+        const date = new Date(time);
+        return date.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit' });
+    });
+
+    const LAPSE_RATE = 0.0065;
+    const BASE_ELEVATION = 675;
+    const midElevation = 1850;
+    const peakElevation = 2182;
+
+    // Calculate temperatures at each elevation for each hour
+    const baseTemps = hourlyData.hourly.temperature_2m.slice(0, hours);
+    const midTemps = baseTemps.map(t => t - (LAPSE_RATE * (midElevation - BASE_ELEVATION)));
+    const peakTemps = baseTemps.map(t => t - (LAPSE_RATE * (peakElevation - BASE_ELEVATION)));
+
+    const chartData = {
+        labels: times,
+        datasets: [
+            {
+                label: 'Peak (2,182m)',
+                data: peakTemps,
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Mid (1,850m)',
+                data: midTemps,
+                borderColor: 'rgb(16, 185, 129)',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Base (675m)',
+                data: baseTemps,
+                borderColor: 'rgb(251, 146, 60)',
+                backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                tension: 0.4
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true },
+                annotation: {
+                    annotations: {
+                        line1: {
+                            type: 'line',
+                            yMin: 0,
+                            yMax: 0,
+                            borderColor: 'rgb(239, 68, 68)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: 'Freeze Level (0°C)'
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: { display: true, text: 'Temperature (°C)' }
+                },
+                x: {
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                }
+            }
+        }
+    });
 }
 
 // ========== EPIC SNOWFALL PREDICTIONS FUNCTION ==========
