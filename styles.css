@@ -191,18 +191,18 @@ h2 {
     border-bottom: none;
 }
 
-/* Current Weather Grid - Cleaner cards */
+/* Current Weather Grid - Compact cards */
 .current-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 8px;
 }
 
 .weather-card {
     background: var(--card-bg);
-    padding: 16px;
-    border-radius: 16px;
+    padding: 12px;
+    border-radius: 12px;
     text-align: center;
     border: 1px solid var(--card-border);
     box-shadow: var(--shadow-sm);
@@ -225,26 +225,28 @@ body.dark-mode .webcam-card {
 }
 
 .weather-card h3 {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--text-medium);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
 }
 
 .weather-card .value {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--primary-blue);
-    margin: 4px 0;
+    margin: 2px 0;
     letter-spacing: -0.02em;
+    line-height: 1;
 }
 
 .weather-card .unit {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--text-light);
     font-weight: 500;
+    margin-top: 2px;
 }
 
 /* Alert Box - Modern iOS style */
