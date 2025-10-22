@@ -1,22 +1,21 @@
 :root {
-    /* Modern color palette - cleaner and more refined */
-    --primary-blue: #1e40af;
-    --primary-blue-light: #3b82f6;
-    --accent-blue: #60a5fa;
-    --snow-blue: #eff6ff;
+    /* Modern color palette - coder aesthetic */
+    --primary-blue: #3b82f6;
+    --primary-blue-light: #60a5fa;
+    --accent-green: #10b981;
+    --accent-cyan: #06b6d4;
     --text-dark: #0f172a;
-    --text-medium: #475569;
+    --text-medium: #64748b;
     --text-light: #94a3b8;
 
     /* Light mode */
-    --bg: #f8fafc;
-    --bg-alt: #f1f5f9;
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
     --card-bg: #ffffff;
-    --card-border: rgba(226, 232, 240, 0.8);
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --card-border: rgba(226, 232, 240, 1);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
     /* Status colors */
     --snow-bg: #dbeafe;
@@ -28,24 +27,28 @@
 }
 
 body.dark-mode {
-    --bg: #0f172a;
-    --bg-alt: #1e293b;
-    --card-bg: #1e293b;
-    --card-border: rgba(51, 65, 85, 0.6);
-    --text-dark: #f1f5f9;
-    --text-medium: #cbd5e1;
-    --text-light: #94a3b8;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    /* Pure black OLED-friendly dark mode */
+    --bg: #000000;
+    --bg-alt: #0a0a0a;
+    --card-bg: #111111;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-dark: #ffffff;
+    --text-medium: #a1a1aa;
+    --text-light: #71717a;
+    --primary-blue: #60a5fa;
+    --primary-blue-light: #93c5fd;
+    --accent-green: #34d399;
+    --accent-cyan: #22d3ee;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.8);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.9);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.95);
 
-    --snow-bg: #1e3a8a;
-    --snow-text: #bfdbfe;
-    --rain-bg: #78350f;
-    --rain-text: #fed7aa;
-    --mix-bg: #064e3b;
-    --mix-text: #a7f3d0;
+    --snow-bg: rgba(59, 130, 246, 0.15);
+    --snow-text: #93c5fd;
+    --rain-bg: rgba(251, 146, 60, 0.15);
+    --rain-text: #fdba74;
+    --mix-bg: rgba(52, 211, 153, 0.15);
+    --mix-text: #6ee7b7;
 }
 
 * {
@@ -70,6 +73,12 @@ body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+/* Monospace for all numeric values - coder aesthetic */
+.value, .zone-temp, .temp, .temp-high, .temp-low, .freeze-level-value, #freeze-level {
+    font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+}
+
 .container {
     max-width: 100%;
     margin: 0 auto;
@@ -86,20 +95,25 @@ header {
     z-index: 100;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
     transition: all 0.3s ease;
 }
 
 body.dark-mode header {
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 header h1 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--text-dark);
     margin-bottom: 4px;
     letter-spacing: -0.02em;
+}
+
+body.dark-mode header h1 {
+    font-weight: 900;
 }
 
 .subtitle {
@@ -113,6 +127,11 @@ header h1 {
     font-size: 12px;
     color: var(--text-light);
     font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+body.dark-mode #last-updated {
+    color: var(--accent-green);
 }
 
 /* Dark Mode Toggle - iOS style */
@@ -194,6 +213,17 @@ h2 {
     transform: scale(0.98);
 }
 
+body.dark-mode .weather-card {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), var(--shadow-sm);
+}
+
+body.dark-mode .forecast-card,
+body.dark-mode .hourly-card,
+body.dark-mode .chart-container,
+body.dark-mode .webcam-card {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), var(--shadow-sm);
+}
+
 .weather-card h3 {
     font-size: 11px;
     font-weight: 600;
@@ -248,23 +278,27 @@ h2 {
 }
 
 body.dark-mode .alert-box.excellent {
-    background: #064e3b;
-    color: #a7f3d0;
+    background: rgba(52, 211, 153, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 body.dark-mode .alert-box.good {
-    background: #1e3a8a;
-    color: #bfdbfe;
+    background: rgba(96, 165, 250, 0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(96, 165, 250, 0.3);
 }
 
 body.dark-mode .alert-box.fair {
-    background: #78350f;
-    color: #fde68a;
+    background: rgba(251, 146, 60, 0.15);
+    color: #fdba74;
+    border: 1px solid rgba(251, 146, 60, 0.3);
 }
 
 body.dark-mode .alert-box.poor {
-    background: #7f1d1d;
-    color: #fecaca;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 /* Freeze Level - Cleaner design */
@@ -288,6 +322,11 @@ body.dark-mode .alert-box.poor {
     border-radius: 16px;
     text-align: center;
     box-shadow: var(--shadow-md);
+}
+
+body.dark-mode .freeze-level-main {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
 }
 
 .freeze-level-value {
@@ -344,6 +383,21 @@ body.dark-mode .alert-box.poor {
 
 .zone-card.mix {
     border-left: 4px solid #10b981;
+}
+
+body.dark-mode .zone-card.snow {
+    border-left-color: #60a5fa;
+    box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.1), var(--shadow-sm);
+}
+
+body.dark-mode .zone-card.rain {
+    border-left-color: #fb923c;
+    box-shadow: 0 0 0 1px rgba(251, 146, 60, 0.1), var(--shadow-sm);
+}
+
+body.dark-mode .zone-card.mix {
+    border-left-color: #34d399;
+    box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.1), var(--shadow-sm);
 }
 
 .zone-icon {
@@ -605,6 +659,15 @@ canvas {
 .webcam-btn:active {
     transform: scale(0.98);
     background: var(--primary-blue-light);
+}
+
+body.dark-mode .webcam-btn {
+    background: var(--accent-green);
+    color: #000000;
+}
+
+body.dark-mode .webcam-btn:active {
+    background: #22c55e;
 }
 
 /* Footer */
