@@ -23,6 +23,12 @@
     --hourly-gradient-end: #e0f2fe;
     --webcam-gradient-start: #fef3c7;
     --webcam-gradient-end: #fde68a;
+    --zone-snow-gradient-start: #dbeafe;
+    --zone-snow-gradient-end: #93c5fd;
+    --zone-rain-gradient-start: #fed7aa;
+    --zone-rain-gradient-end: #fdba74;
+    --zone-mix-gradient-start: #d1fae5;
+    --zone-mix-gradient-end: #86efac;
 }
 
 /* Dark mode colors */
@@ -41,6 +47,12 @@ body.dark-mode {
     --hourly-gradient-end: #4b5563;
     --webcam-gradient-start: #78350f;
     --webcam-gradient-end: #92400e;
+    --zone-snow-gradient-start: #1e3a8a;
+    --zone-snow-gradient-end: #3b82f6;
+    --zone-rain-gradient-start: #78350f;
+    --zone-rain-gradient-end: #f59e0b;
+    --zone-mix-gradient-start: #064e3b;
+    --zone-mix-gradient-end: #10b981;
 }
 
 * {
@@ -416,6 +428,153 @@ footer a:hover {
     transform: scale(1.05);
 }
 
+/* Freeze Level Section */
+.freeze-intro {
+    color: var(--mountain-grey);
+    margin-bottom: 25px;
+    font-size: 1.05em;
+    font-style: italic;
+}
+
+.freeze-level-display {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.freeze-level-main {
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .freeze-level-main {
+    background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%);
+}
+
+.freeze-level-value {
+    font-size: 3.5em;
+    font-weight: bold;
+    color: var(--deep-blue);
+    margin-bottom: 10px;
+}
+
+body.dark-mode .freeze-level-value {
+    color: #c7d2fe;
+}
+
+.freeze-unit {
+    font-size: 0.5em;
+    color: var(--mountain-grey);
+    margin-left: 10px;
+}
+
+.freeze-level-label {
+    font-size: 1.2em;
+    color: var(--mountain-grey);
+    font-weight: 500;
+}
+
+.elevation-zones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.zone-card {
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.zone-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.zone-card.snow {
+    background: linear-gradient(135deg, var(--zone-snow-gradient-start) 0%, var(--zone-snow-gradient-end) 100%);
+}
+
+.zone-card.rain {
+    background: linear-gradient(135deg, var(--zone-rain-gradient-start) 0%, var(--zone-rain-gradient-end) 100%);
+}
+
+.zone-card.mix {
+    background: linear-gradient(135deg, var(--zone-mix-gradient-start) 0%, var(--zone-mix-gradient-end) 100%);
+}
+
+.zone-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.zone-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--deep-blue);
+    margin-bottom: 8px;
+}
+
+body.dark-mode .zone-name {
+    color: #e2e8f0;
+}
+
+.zone-elevation {
+    color: var(--mountain-grey);
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.zone-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.status-icon {
+    font-size: 1.5em;
+}
+
+.status-text {
+    color: var(--deep-blue);
+}
+
+body.dark-mode .status-text {
+    color: #e2e8f0;
+}
+
+.zone-temp {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--deep-blue);
+    margin-top: 10px;
+}
+
+body.dark-mode .zone-temp {
+    color: #e2e8f0;
+}
+
+.freeze-level-chart {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.freeze-level-chart canvas {
+    max-height: 350px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header h1 {
@@ -436,6 +595,14 @@ footer a:hover {
 
     .webcam-grid {
         grid-template-columns: 1fr;
+    }
+
+    .elevation-zones {
+        grid-template-columns: 1fr;
+    }
+
+    .freeze-level-value {
+        font-size: 2.5em;
     }
 }
 

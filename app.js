@@ -48,16 +48,27 @@ async function fetchWeatherData() {
 
         const dailyWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,precipitation_probability_max,wind_speed_10m_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm`;
 
+        // Fetch data for different elevations (for freeze level calculation)
+        const peakUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=2182&temperature_unit=celsius&forecast_days=3`;
+        const midUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=1850&temperature_unit=celsius&forecast_days=3`;
+        const baseUrl = `https://api.open-meteo.com/v1/forecast?latitude=${WHISTLER_LAT}&longitude=${WHISTLER_LON}&current=temperature_2m&hourly=temperature_2m&elevation=675&temperature_unit=celsius&forecast_days=3`;
+
         // Fetch all data in parallel
-        const [currentResponse, hourlyResponse, dailyResponse] = await Promise.all([
+        const [currentResponse, hourlyResponse, dailyResponse, peakResponse, midResponse, baseResponse] = await Promise.all([
             fetch(currentWeatherUrl),
             fetch(hourlyWeatherUrl),
-            fetch(dailyWeatherUrl)
+            fetch(dailyWeatherUrl),
+            fetch(peakUrl),
+            fetch(midUrl),
+            fetch(baseUrl)
         ]);
 
         const currentData = await currentResponse.json();
         const hourlyData = await hourlyResponse.json();
         const dailyData = await dailyResponse.json();
+        const peakData = await peakResponse.json();
+        const midData = await midResponse.json();
+        const baseData = await baseResponse.json();
 
         // Update UI
         updateCurrentWeather(currentData, hourlyData);
@@ -65,6 +76,7 @@ async function fetchWeatherData() {
         updateDailyForecast(dailyData);
         updateHourlyForecast(hourlyData);
         updateSkiConditions(currentData, hourlyData);
+        updateFreezeLevel(peakData, midData, baseData);
 
         // Update last updated time
         document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
@@ -354,6 +366,198 @@ function updateSkiConditions(currentData, hourlyData) {
 
     alertBox.className = `alert-box ${condition}`;
     alertBox.innerHTML = message;
+}
+
+function updateFreezeLevel(peakData, midData, baseData) {
+    // Get current temperatures at different elevations
+    const peakTemp = peakData.current.temperature_2m;
+    const midTemp = midData.current.temperature_2m;
+    const baseTemp = baseData.current.temperature_2m;
+
+    // Elevations in meters
+    const elevations = [
+        { name: 'base', elevation: 675, temp: baseTemp },
+        { name: 'mid', elevation: 1850, temp: midTemp },
+        { name: 'peak', elevation: 2182, temp: peakTemp }
+    ];
+
+    // Calculate freeze level using linear interpolation
+    let freezeLevel = 0;
+
+    // Find where temperature crosses 0°C
+    if (baseTemp <= 0) {
+        freezeLevel = 0; // Below base elevation
+    } else if (peakTemp >= 0) {
+        freezeLevel = 2500; // Above peak elevation
+    } else {
+        // Interpolate between base and mid, or mid and peak
+        if (midTemp >= 0) {
+            // Freeze level is between mid and peak
+            const tempDiff = midTemp - peakTemp;
+            const elevDiff = 2182 - 1850;
+            const tempToZero = midTemp;
+            freezeLevel = 1850 + (tempToZero / tempDiff) * elevDiff;
+        } else {
+            // Freeze level is between base and mid
+            const tempDiff = baseTemp - midTemp;
+            const elevDiff = 1850 - 675;
+            const tempToZero = baseTemp;
+            freezeLevel = 675 + (tempToZero / tempDiff) * elevDiff;
+        }
+    }
+
+    // Update freeze level display
+    document.getElementById('freeze-level').textContent = Math.round(freezeLevel);
+
+    // Update zone cards with temperatures and snow/rain status
+    updateZoneCard('peak', peakTemp, freezeLevel, 2182);
+    updateZoneCard('mid', midTemp, freezeLevel, 1850);
+    updateZoneCard('base', baseTemp, freezeLevel, 675);
+
+    // Create freeze level chart
+    createFreezeLevelChart(peakData, midData, baseData, freezeLevel);
+}
+
+function updateZoneCard(zone, temp, freezeLevel, elevation) {
+    const tempElement = document.getElementById(`${zone}-temp`);
+    const statusElement = document.getElementById(`${zone}-status`);
+    const card = document.querySelector(`.zone-card[data-zone="${zone}"]`);
+
+    // Update temperature
+    tempElement.textContent = `${Math.round(temp)}°C`;
+
+    // Determine if snow or rain
+    let status = '';
+    let icon = '';
+    let cardClass = '';
+
+    if (temp <= 0) {
+        status = 'Snow';
+        icon = '❄️';
+        cardClass = 'snow';
+    } else if (temp > 0 && temp <= 2) {
+        status = 'Snow/Mix';
+        icon = '🌨️';
+        cardClass = 'mix';
+    } else {
+        status = 'Rain';
+        icon = '🌧️';
+        cardClass = 'rain';
+    }
+
+    // Update status
+    statusElement.innerHTML = `
+        <span class="status-icon">${icon}</span>
+        <span class="status-text">${status}</span>
+    `;
+
+    // Update card class
+    card.className = `zone-card ${cardClass}`;
+}
+
+function createFreezeLevelChart(peakData, midData, baseData) {
+    const ctx = document.getElementById('freezeLevelChart');
+
+    // Get next 24 hours of data
+    const hours = 24;
+    const labels = [];
+    const peakTemps = [];
+    const midTemps = [];
+    const baseTemps = [];
+
+    for (let i = 0; i < hours; i++) {
+        const time = new Date(peakData.hourly.time[i]);
+        labels.push(time.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' }));
+        peakTemps.push(peakData.hourly.temperature_2m[i]);
+        midTemps.push(midData.hourly.temperature_2m[i]);
+        baseTemps.push(baseData.hourly.temperature_2m[i]);
+    }
+
+    // Destroy existing chart if it exists
+    if (window.freezeLevelChart) {
+        window.freezeLevelChart.destroy();
+    }
+
+    window.freezeLevelChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Peak (2,182m)',
+                    data: peakTemps,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Mid-Mountain (1,850m)',
+                    data: midTemps,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Village Base (675m)',
+                    data: baseTemps,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Freeze Line (0°C)',
+                    data: Array(hours).fill(0),
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature by Elevation (24 Hours)',
+                    font: { size: 16 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    },
+                    grid: {
+                        color: (context) => {
+                            if (context.tick.value === 0) {
+                                return '#ef4444';
+                            }
+                            return 'rgba(0, 0, 0, 0.1)';
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
 }
 
 function getWeatherEmoji(weatherCode) {

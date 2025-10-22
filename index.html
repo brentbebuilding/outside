@@ -74,6 +74,61 @@
             <div id="ski-alert" class="alert-box"></div>
         </section>
 
+        <!-- Freeze Level / Snow Line -->
+        <section class="freeze-level-section">
+            <h2>Freeze Level & Snow Line</h2>
+            <p class="freeze-intro">Critical for Whistler's 1,500m elevation range - know where rain turns to snow!</p>
+
+            <div class="freeze-level-display">
+                <div class="freeze-level-main">
+                    <div class="freeze-level-value">
+                        <span id="freeze-level">--</span>
+                        <span class="freeze-unit">meters</span>
+                    </div>
+                    <div class="freeze-level-label">Current Freeze Level (0°C Line)</div>
+                </div>
+
+                <div class="elevation-zones">
+                    <div class="zone-card" data-zone="peak">
+                        <div class="zone-icon">⛰️</div>
+                        <div class="zone-name">Peak</div>
+                        <div class="zone-elevation">2,182m</div>
+                        <div class="zone-status" id="peak-status">
+                            <span class="status-icon">❄️</span>
+                            <span class="status-text">Snow</span>
+                        </div>
+                        <div class="zone-temp" id="peak-temp">--°C</div>
+                    </div>
+
+                    <div class="zone-card" data-zone="mid">
+                        <div class="zone-icon">🏔️</div>
+                        <div class="zone-name">Mid-Mountain</div>
+                        <div class="zone-elevation">1,850m</div>
+                        <div class="zone-status" id="mid-status">
+                            <span class="status-icon">❄️</span>
+                            <span class="status-text">Snow</span>
+                        </div>
+                        <div class="zone-temp" id="mid-temp">--°C</div>
+                    </div>
+
+                    <div class="zone-card" data-zone="base">
+                        <div class="zone-icon">🏘️</div>
+                        <div class="zone-name">Village Base</div>
+                        <div class="zone-elevation">675m</div>
+                        <div class="zone-status" id="base-status">
+                            <span class="status-icon">🌧️</span>
+                            <span class="status-text">Rain</span>
+                        </div>
+                        <div class="zone-temp" id="base-temp">--°C</div>
+                    </div>
+                </div>
+
+                <div class="freeze-level-chart">
+                    <canvas id="freezeLevelChart"></canvas>
+                </div>
+            </div>
+        </section>
+
         <!-- Live Mountain Webcams -->
         <section class="webcams-section">
             <h2>Live Mountain Webcams</h2>
