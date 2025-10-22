@@ -303,6 +303,252 @@ body.dark-mode .alert-box.poor {
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+/* EPIC SNOWFALL PREDICTIONS - BREAD AND BUTTER */
+.snowfall-epic-section {
+    background: var(--card-bg);
+    padding: 24px 20px;
+    margin: 20px 0;
+    border-radius: 16px;
+    border: 2px solid var(--card-border);
+    box-shadow: var(--shadow-md);
+}
+
+body.dark-mode .snowfall-epic-section {
+    border-color: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.1), var(--shadow-md);
+}
+
+.snowfall-epic-section h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .snowfall-epic-section h2 {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-intro {
+    color: var(--text-medium);
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Powder Alert Banner */
+.powder-alert-banner {
+    display: none;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.powder-alert-banner.active {
+    display: block;
+}
+
+.powder-alert-banner.epic {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+    border: 2px solid var(--accent-green);
+    color: var(--accent-green);
+}
+
+body.dark-mode .powder-alert-banner.epic {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.25));
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.01); }
+}
+
+/* Snow Stats Grid */
+.snow-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+    .snow-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.snow-stat-card {
+    background: var(--bg-alt);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.snow-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+body.dark-mode .snow-stat-card {
+    background: rgba(10, 10, 10, 0.8);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.snow-stat-card.big-stat .stat-value {
+    font-size: 42px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-cyan);
+    line-height: 1;
+    margin: 8px 0;
+}
+
+body.dark-mode .snow-stat-card.big-stat .stat-value {
+    color: var(--accent-green);
+}
+
+.snow-stat-card .stat-label {
+    font-size: 12px;
+    color: var(--text-medium);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.snow-stat-card .stat-unit {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.quality-stat .stat-value {
+    font-size: 32px;
+    margin: 8px 0;
+}
+
+.quality-indicator.powder {
+    color: var(--accent-green);
+}
+
+.quality-indicator.wet {
+    color: var(--accent-cyan);
+}
+
+.quality-indicator.mixed {
+    color: #f59e0b;
+}
+
+/* Epic Charts */
+.epic-chart {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    margin-bottom: 20px;
+}
+
+body.dark-mode .epic-chart {
+    background: rgba(17, 17, 17, 0.8);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.epic-chart h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.chart-subtitle {
+    font-size: 13px;
+    color: var(--text-medium);
+    margin-bottom: 16px;
+}
+
+/* Daily Snow Bars */
+.daily-snow-container {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+}
+
+body.dark-mode .daily-snow-container {
+    background: rgba(17, 17, 17, 0.8);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.daily-snow-container h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+}
+
+.daily-snow-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.daily-snow-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.snow-bar-day {
+    min-width: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-medium);
+}
+
+.snow-bar-visual {
+    flex: 1;
+    height: 32px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-alt);
+}
+
+.snow-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--primary-blue));
+    border-radius: 6px;
+    transition: width 1s ease-out;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+}
+
+body.dark-mode .snow-bar-fill {
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+}
+
+.snow-bar-amount {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: #ffffff;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 /* Freeze Level - Cleaner design */
 .freeze-intro {
     color: var(--text-medium);

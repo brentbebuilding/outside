@@ -81,6 +81,59 @@
             <div id="ski-alert" class="alert-box"></div>
         </section>
 
+        <!-- EPIC SNOWFALL PREDICTIONS - BREAD AND BUTTER -->
+        <section class="snowfall-epic-section">
+            <h2>❄️ Snowfall Predictions</h2>
+            <p class="section-intro">Your bread and butter - detailed snow forecasts for epic powder days</p>
+
+            <!-- Powder Alert Banner -->
+            <div id="powder-alert" class="powder-alert-banner"></div>
+
+            <!-- Snow Stats Grid -->
+            <div class="snow-stats-grid">
+                <div class="snow-stat-card big-stat">
+                    <div class="stat-label">Next 24 Hours</div>
+                    <div class="stat-value" id="snow-24h">--</div>
+                    <div class="stat-unit">cm</div>
+                </div>
+                <div class="snow-stat-card big-stat">
+                    <div class="stat-label">Next 48 Hours</div>
+                    <div class="stat-value" id="snow-48h">--</div>
+                    <div class="stat-unit">cm</div>
+                </div>
+                <div class="snow-stat-card big-stat">
+                    <div class="stat-label">Next 7 Days</div>
+                    <div class="stat-value" id="snow-7d">--</div>
+                    <div class="stat-unit">cm</div>
+                </div>
+                <div class="snow-stat-card quality-stat">
+                    <div class="stat-label">Snow Quality</div>
+                    <div class="stat-value quality-indicator" id="snow-quality">--</div>
+                    <div class="stat-unit" id="snow-quality-desc">--</div>
+                </div>
+            </div>
+
+            <!-- Accumulated Snowfall Chart -->
+            <div class="chart-container epic-chart">
+                <h3>Accumulated Snowfall - Next 7 Days</h3>
+                <p class="chart-subtitle">Total snow accumulation over time</p>
+                <canvas id="accumulatedSnowChart"></canvas>
+            </div>
+
+            <!-- Hourly Snowfall Intensity -->
+            <div class="chart-container epic-chart">
+                <h3>Hourly Snowfall Intensity - Next 48 Hours</h3>
+                <p class="chart-subtitle">When is the powder coming?</p>
+                <canvas id="hourlySnowfallChart"></canvas>
+            </div>
+
+            <!-- 7-Day Snowfall Bars -->
+            <div class="daily-snow-container">
+                <h3>7-Day Snowfall Totals</h3>
+                <div id="daily-snow-bars" class="daily-snow-bars"></div>
+            </div>
+        </section>
+
         <!-- Freeze Level / Snow Line -->
         <section class="freeze-level-section">
             <h2>Freeze Level & Snow Line</h2>

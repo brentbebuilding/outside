@@ -3,7 +3,7 @@ const WHISTLER_LAT = 50.1208;
 const WHISTLER_LON = -122.9544;
 
 // Chart instances
-let tempChart, snowChart, cloudChart, windChart;
+let tempChart, snowChart, cloudChart, windChart, accumulatedSnowChart, hourlySnowfallChart;
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,7 +72,7 @@ async function fetchWeatherData() {
 
         // Update UI
         updateCurrentWeather(currentData, hourlyData);
-        updateCharts(hourlyData);
+        updateCharts(hourlyData, dailyData);
         updateDailyForecast(dailyData);
         updateHourlyForecast(hourlyData);
         updateSkiConditions(currentData, hourlyData);
@@ -104,7 +104,7 @@ function updateCurrentWeather(currentData, hourlyData) {
     document.getElementById('visibility').textContent = (visibility / 1000).toFixed(1);
 }
 
-function updateCharts(hourlyData) {
+function updateCharts(hourlyData, dailyData) {
     const hourly = hourlyData.hourly;
 
     // Get next 48 hours of data
@@ -113,6 +113,11 @@ function updateCharts(hourlyData) {
         const date = new Date(time);
         return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' });
     });
+
+    // ========== EPIC SNOWFALL PREDICTIONS ==========
+    // Pass both hourly and daily data for epic snowfall predictions
+    const combinedData = { hourly: hourly, daily: dailyData.daily };
+    updateEpicSnowfall(hourly, combinedData);
 
     // Temperature Chart
     const tempData = {
@@ -453,6 +458,212 @@ function updateZoneCard(zone, temp, freezeLevel, elevation) {
 
     // Update card class
     card.className = `zone-card ${cardClass}`;
+}
+
+// ========== EPIC SNOWFALL PREDICTIONS FUNCTION ==========
+function updateEpicSnowfall(hourly, hourlyData) {
+    // Calculate snow totals
+    const snow24h = hourly.snowfall.slice(0, 24).reduce((a, b) => a + b, 0);
+    const snow48h = hourly.snowfall.slice(0, 48).reduce((a, b) => a + b, 0);
+    const snow7d = hourly.snowfall.slice(0, 168).reduce((a, b) => a + b, 0); // 7 days = 168 hours
+
+    // Update snow stats
+    document.getElementById('snow-24h').textContent = (snow24h / 10).toFixed(1); // Convert mm to cm
+    document.getElementById('snow-48h').textContent = (snow48h / 10).toFixed(1);
+    document.getElementById('snow-7d').textContent = (snow7d / 10).toFixed(1);
+
+    // Calculate snow quality (based on temperature - colder = better powder)
+    const avgTemp = hourly.temperature_2m.slice(0, 24).reduce((a, b) => a + b, 0) / 24;
+    let quality = '❄️';
+    let qualityDesc = 'Dry Powder';
+    let qualityClass = 'powder';
+
+    if (avgTemp > 0) {
+        quality = '💧';
+        qualityDesc = 'Wet Snow';
+        qualityClass = 'wet';
+    } else if (avgTemp > -5) {
+        quality = '❄️💧';
+        qualityDesc = 'Mixed';
+        qualityClass = 'mixed';
+    }
+
+    document.getElementById('snow-quality').textContent = quality;
+    document.getElementById('snow-quality').className = `stat-value quality-indicator ${qualityClass}`;
+    document.getElementById('snow-quality-desc').textContent = qualityDesc;
+
+    // Powder Alert Banner
+    const powderAlert = document.getElementById('powder-alert');
+    if (snow24h > 100) { // More than 10cm in 24 hours = EPIC
+        powderAlert.className = 'powder-alert-banner active epic';
+        powderAlert.innerHTML = `🎿 POWDER ALERT! ${(snow24h / 10).toFixed(1)}cm expected in next 24 hours! 🎿`;
+    } else if (snow24h > 50) { // More than 5cm
+        powderAlert.className = 'powder-alert-banner active epic';
+        powderAlert.innerHTML = `❄️ ${(snow24h / 10).toFixed(1)}cm of fresh snow coming in next 24 hours!`;
+    } else {
+        powderAlert.className = 'powder-alert-banner';
+    }
+
+    // Create Accumulated Snowfall Chart (7 days)
+    const hours168 = 168; // 7 days
+    const times7d = hourly.time.slice(0, hours168).map((time, i) => {
+        if (i % 12 === 0) { // Show every 12 hours
+            const date = new Date(time);
+            return date.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+        }
+        return '';
+    });
+
+    // Calculate accumulated snowfall
+    let accumulated = [];
+    let total = 0;
+    for (let i = 0; i < hours168; i++) {
+        total += hourly.snowfall[i] || 0;
+        accumulated.push(total / 10); // Convert to cm
+    }
+
+    const accumulatedData = {
+        labels: times7d,
+        datasets: [{
+            label: 'Accumulated Snowfall (cm)',
+            data: accumulated,
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            tension: 0.3,
+            fill: true,
+            borderWidth: 3
+        }]
+    };
+
+    if (accumulatedSnowChart) {
+        accumulatedSnowChart.destroy();
+    }
+    accumulatedSnowChart = new Chart(document.getElementById('accumulatedSnowChart'), {
+        type: 'line',
+        data: accumulatedData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Total: ${context.parsed.y.toFixed(1)} cm`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total Accumulated Snow (cm)',
+                        font: { weight: 'bold' }
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' cm';
+                        }
+                    }
+                },
+                x: {
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                }
+            }
+        }
+    });
+
+    // Create Hourly Snowfall Intensity Chart (48 hours)
+    const next48Hours = 48;
+    const times48h = hourly.time.slice(0, next48Hours).map(time => {
+        const date = new Date(time);
+        return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' });
+    });
+
+    // Create gradient colors - highlight intense snowfall
+    const snowfallColors = hourly.snowfall.slice(0, next48Hours).map(snow => {
+        const cm = snow / 10;
+        if (cm > 2) return 'rgba(16, 185, 129, 0.9)'; // Epic - bright green
+        if (cm > 1) return 'rgba(6, 182, 212, 0.8)'; // Good - cyan
+        if (cm > 0.5) return 'rgba(59, 130, 246, 0.7)'; // Moderate - blue
+        return 'rgba(156, 163, 175, 0.5)'; // Light - gray
+    });
+
+    const hourlySnowfallData = {
+        labels: times48h,
+        datasets: [{
+            label: 'Snowfall per Hour (cm)',
+            data: hourly.snowfall.slice(0, next48Hours).map(snow => snow / 10),
+            backgroundColor: snowfallColors,
+            borderColor: 'rgb(16, 185, 129)',
+            borderWidth: 1
+        }]
+    };
+
+    if (hourlySnowfallChart) {
+        hourlySnowfallChart.destroy();
+    }
+    hourlySnowfallChart = new Chart(document.getElementById('hourlySnowfallChart'), {
+        type: 'bar',
+        data: hourlySnowfallData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const cm = context.parsed.y;
+                            if (cm > 2) return `${cm.toFixed(1)} cm - EPIC! 🎿`;
+                            if (cm > 1) return `${cm.toFixed(1)} cm - Great! ❄️`;
+                            if (cm > 0.5) return `${cm.toFixed(1)} cm - Good`;
+                            return `${cm.toFixed(1)} cm`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Snowfall (cm/hour)',
+                        font: { weight: 'bold' }
+                    }
+                },
+                x: {
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                }
+            }
+        }
+    });
+
+    // Create Daily Snow Bars (using daily data if available)
+    if (hourlyData.daily && hourlyData.daily.snowfall_sum) {
+        const dailyBarsContainer = document.getElementById('daily-snow-bars');
+        const maxSnow = Math.max(...hourlyData.daily.snowfall_sum);
+
+        dailyBarsContainer.innerHTML = hourlyData.daily.time.slice(0, 7).map((day, i) => {
+            const date = new Date(day);
+            const dayName = date.toLocaleString('en-US', { weekday: 'short' });
+            const snowCm = hourlyData.daily.snowfall_sum[i];
+            const percentage = maxSnow > 0 ? (snowCm / maxSnow) * 100 : 0;
+
+            return `
+                <div class="daily-snow-bar">
+                    <div class="snow-bar-day">${dayName}</div>
+                    <div class="snow-bar-visual">
+                        <div class="snow-bar-fill" style="width: ${percentage}%">
+                            <span class="snow-bar-amount">${snowCm.toFixed(1)} cm</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
 }
 
 function createFreezeLevelChart(peakData, midData, baseData) {
