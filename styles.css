@@ -592,6 +592,106 @@ canvas {
     margin: 2px 0;
 }
 
+/* Clear Dark Sky Section */
+.cds-intro {
+    color: var(--text-medium);
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cds-chart-container {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .cds-chart-container {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), var(--shadow-sm);
+}
+
+.cds-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+}
+
+.legend-item {
+    text-align: center;
+}
+
+.legend-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.legend-desc {
+    font-size: 11px;
+    color: var(--text-light);
+}
+
+.cds-chart-wrapper {
+    background: var(--bg-alt);
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.cds-chart {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .cds-chart {
+    filter: brightness(0.95) contrast(1.05);
+}
+
+.cds-refresh {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-light);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.cds-refresh a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cds-refresh a:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .cds-refresh {
+    color: var(--accent-green);
+}
+
+.cds-info {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-medium);
+}
+
+.cds-info strong {
+    color: var(--text-dark);
+}
+
 /* Webcam Section */
 .webcam-intro {
     color: var(--text-medium);
