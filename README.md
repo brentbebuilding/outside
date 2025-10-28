@@ -9,7 +9,7 @@ A comprehensive, real-time winter weather application specifically designed for 
 - **Automatic updates**: Data refreshes every 10 minutes
 - **Winter-focused**: Snow depth and ski-specific conditions
 
-### Visual Charts & Graphs
+### Visual Charts & Sweet Graphs
 - **Temperature Forecast**: 48-hour temperature trend
 - **Snowfall & Precipitation**: Detailed snow and rain predictions
 - **Cloud Cover Prediction**: Cloud coverage forecast for planning
