@@ -1,4 +1,4 @@
-# Whistler Winter Weather App + snow making summoning + cloud seeding requsts
+# Whistler Winter Weather App + snow making summoning + cloud seeding requsts + accepting tips
 
 A comprehensive, real-time winter weather application specifically designed for Whistler, BC. Built with 100% open source technologies and free weather APIs.
 
